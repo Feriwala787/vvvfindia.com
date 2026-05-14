@@ -7,7 +7,10 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold text-primary">VVVF India</h3>
+            <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+              <img src="/logo.jpg" alt="VVVF" className="h-8 w-8 rounded-full" />
+              VVVF India
+            </h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Vishwa Vijeta Vision Foundation — Empowering communities across India.
             </p>
