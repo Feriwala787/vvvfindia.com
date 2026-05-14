@@ -16,11 +16,12 @@ export default function DonatePage() {
   const [amount, setAmount] = useState(1000);
   const [custom, setCustom] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showUPI, setShowUPI] = useState(false);
+
+  const finalAmount = custom ? Number(custom) : amount;
 
   const handleDonate = async () => {
-    const finalAmount = custom ? Number(custom) : amount;
     if (!finalAmount || finalAmount < 1) return;
-
     setLoading(true);
     try {
       const res = await fetch("/api/donate", {
@@ -28,15 +29,20 @@ export default function DonatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: finalAmount }),
       });
-      const { orderId, key } = await res.json();
+      const data = await res.json();
+
+      if (data.error || !data.orderId) {
+        setShowUPI(true);
+        return;
+      }
 
       const options = {
-        key,
+        key: data.key,
         amount: finalAmount * 100,
         currency: "INR",
         name: "VVVF India",
         description: "Donation to Vishwa Vijeta Vision Foundation",
-        order_id: orderId,
+        order_id: data.orderId,
         handler: () => {
           alert("Thank you for your donation! 🙏");
         },
@@ -46,7 +52,7 @@ export default function DonatePage() {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch {
-      alert("Something went wrong. Please try again.");
+      setShowUPI(true);
     } finally {
       setLoading(false);
     }
@@ -96,9 +102,23 @@ export default function DonatePage() {
             className="mt-6 w-full"
             size="lg"
           >
-            {loading ? "Processing..." : `Donate ₹${(custom ? Number(custom) : amount).toLocaleString("en-IN")}`}
+            {loading ? "Processing..." : `Donate ₹${finalAmount.toLocaleString("en-IN")}`}
           </Button>
         </div>
+
+        {/* UPI / Bank Transfer fallback */}
+        {showUPI && (
+          <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6 text-left">
+            <h3 className="font-semibold text-primary">Donate via UPI / Bank Transfer</h3>
+            <div className="mt-3 space-y-2 text-sm">
+              <p><span className="font-medium">UPI ID:</span> vvvfindia@upi</p>
+              <p><span className="font-medium">Amount:</span> ₹{finalAmount.toLocaleString("en-IN")}</p>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              After payment, please send a screenshot to our contact page for receipt.
+            </p>
+          </div>
+        )}
 
         <div className="mt-8 rounded-lg border p-6 text-left">
           <h2 className="font-semibold">Why Donate?</h2>
