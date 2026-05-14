@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 async function getCampaign(slug: string) {
   const supabase = getSupabase();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("campaigns")
     .select("*")

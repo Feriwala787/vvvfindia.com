@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 async function getLatestCampaigns() {
   const supabase = getSupabase();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("campaigns")
     .select("*")

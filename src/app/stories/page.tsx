@@ -16,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 async function getStories() {
   const supabase = getSupabase();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("stories")
     .select("*")

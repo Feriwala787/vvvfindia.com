@@ -9,6 +9,9 @@ export async function POST(req: NextRequest) {
   }
 
   const supabase = getSupabaseAdmin();
+  if (!supabase) {
+    return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+  }
   const { error } = await supabase.from("contacts").insert({ name, email, subject, message });
 
   if (error) {

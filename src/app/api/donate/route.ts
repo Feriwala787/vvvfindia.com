@@ -6,8 +6,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
-  const key_id = process.env.RAZORPAY_KEY_ID!;
-  const key_secret = process.env.RAZORPAY_KEY_SECRET!;
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+
+  if (!key_id || !key_secret) {
+    return NextResponse.json({ error: "Payment gateway not configured" }, { status: 503 });
+  }
 
   const res = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",

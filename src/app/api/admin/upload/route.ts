@@ -13,9 +13,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
   }
 
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+  }
+
   const ext = file.name.split(".").pop();
   const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const supabaseAdmin = getSupabaseAdmin();
 
   const { error } = await supabaseAdmin.storage
     .from("images")

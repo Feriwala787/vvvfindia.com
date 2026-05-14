@@ -13,6 +13,7 @@ function checkAuth(req: NextRequest) {
 export async function GET(req: NextRequest) {
   if (!checkAuth(req)) return unauthorized();
   const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const { data, error } = await supabaseAdmin
     .from("campaigns")
     .select("*")
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   if (!checkAuth(req)) return unauthorized();
   const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const body = await req.json();
   const slug = body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   const { data, error } = await supabaseAdmin
@@ -38,6 +40,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   if (!checkAuth(req)) return unauthorized();
   const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const body = await req.json();
   const { id, ...updates } = body;
   const { data, error } = await supabaseAdmin
@@ -53,6 +56,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   if (!checkAuth(req)) return unauthorized();
   const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   const { id } = await req.json();
   const { error } = await supabaseAdmin.from("campaigns").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
