@@ -45,6 +45,21 @@ CREATE POLICY "Service role full access campaigns" ON campaigns
 CREATE POLICY "Service role full access stories" ON stories
   FOR ALL USING (auth.role() = 'service_role');
 
+-- Contacts table (from contact form)
+CREATE TABLE contacts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  subject TEXT DEFAULT '',
+  message TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access contacts" ON contacts
+  FOR ALL USING (auth.role() = 'service_role');
+
 -- Storage bucket for images
 INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true);
 

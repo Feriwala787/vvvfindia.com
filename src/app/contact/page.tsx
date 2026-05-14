@@ -1,11 +1,32 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Contact Us | VVVF India",
-  description: "Get in touch with Vishwa Vijeta Vision Foundation. Reach out for partnerships, volunteering, or queries.",
-};
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setStatus("success");
+        setForm({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="text-3xl font-bold">Contact Us</h1>
@@ -14,13 +35,15 @@ export default function ContactPage() {
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-sm font-medium" htmlFor="name">Name</label>
             <input
               id="name"
               type="text"
               placeholder="Your name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
               required
             />
@@ -31,6 +54,8 @@ export default function ContactPage() {
               id="email"
               type="email"
               placeholder="your@email.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
               required
             />
@@ -41,6 +66,8 @@ export default function ContactPage() {
               id="subject"
               type="text"
               placeholder="How can we help?"
+              value={form.subject}
+              onChange={(e) => setForm({ ...form, subject: e.target.value })}
               className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
             />
           </div>
@@ -50,16 +77,21 @@ export default function ContactPage() {
               id="message"
               placeholder="Your message..."
               rows={5}
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
               className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Send Message
-          </button>
+          <Button type="submit" disabled={status === "loading"}>
+            {status === "loading" ? "Sending..." : "Send Message"}
+          </Button>
+          {status === "success" && (
+            <p className="text-sm text-green-600">Message sent successfully! We&apos;ll get back to you soon.</p>
+          )}
+          {status === "error" && (
+            <p className="text-sm text-red-600">Something went wrong. Please try again.</p>
+          )}
         </form>
 
         <div className="space-y-6">
