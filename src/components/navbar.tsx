@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -8,6 +9,8 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/campaigns", label: "Campaigns" },
+  { href: "/volunteer", label: "Volunteer" },
+  { href: "/membership", label: "Membership" },
   { href: "/stories", label: "Stories" },
   { href: "/donate", label: "Donate" },
   { href: "/contact", label: "Contact" },
@@ -19,8 +22,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link href="/" className="text-xl font-bold text-primary">
-          VVVF India
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="VVVF India" width={120} height={40} priority />
         </Link>
 
         {/* Desktop */}
